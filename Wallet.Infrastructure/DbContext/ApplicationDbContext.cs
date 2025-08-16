@@ -4,6 +4,7 @@ using Wallet.Domain.Entities;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
+    #region Tables
     public DbSet<User> Users { get; set; }
     public DbSet<UserAddress> UserAddresses { get; set; }
     public DbSet<Wallet> Wallets { get; set; }
@@ -18,6 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Blacklist> Blacklists { get; set; }
     public DbSet<Receipt> Receipts { get; set; }
     public DbSet<SavedTransfer> SavedTransfers { get; set; }
+    #endregion
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,10 +30,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             if (idProp != null)
             {
                 entityType.SetPrimaryKey(idProp);
+                modelBuilder.Entity(entityType.ClrType)
+                    .Property("Id")
+                    .HasDefaultValueSql("gen_random_uuid()");
             }
         }
 
-        // User
+        #region User
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.FirstName).HasMaxLength(50);
@@ -39,8 +44,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(11);
         });
+        #endregion
 
-        // UserAddress
+        #region UserAddress
         modelBuilder.Entity<UserAddress>(entity =>
         {
             entity.HasOne(e => e.User)
@@ -48,8 +54,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                   .HasForeignKey(e => e.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
+        #endregion
 
-        // Wallet
+        #region Wallet
         modelBuilder.Entity<Wallet>(entity =>
         {
             entity.HasOne(e => e.User)
@@ -57,11 +64,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                   .HasForeignKey(e => e.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
 
+            entity.HasIndex(e => e.WalletNumber).IsUnique();
+
             entity.Property(e => e.PayableBalance).HasPrecision(18, 2);
             entity.Property(e => e.TransferableBalance).HasPrecision(18, 2);
+            entity.Property(e => e.WalletNumber).HasDefaultValueSql("nextval('wallet_number_sequence')");
         });
+        #endregion
 
-        // Transaction
+        #region Transaction
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.HasOne(e => e.Wallet)
@@ -81,15 +92,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.TransferableInitialBalance).HasPrecision(18, 2);
             entity.Property(e => e.TransferableAmount).HasPrecision(18, 2);
         });
+        #endregion
 
-        // TransactionBankInfo
+        #region TransactionBankInfo
         modelBuilder.Entity<TransactionBankInfo>(entity =>
         {
             entity.Property(e => e.PayeeIban).HasMaxLength(26);
             entity.Property(e => e.BankCommissionAmount).HasPrecision(18, 2);
         });
+        #endregion
 
-        // Province, District, Neighborhood
+        #region Province, District, Neighborhood
         modelBuilder.Entity<Province>(entity =>
         {
             entity.Property(e => e.Name).IsRequired();
@@ -104,26 +117,30 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             entity.Property(e => e.Name).IsRequired();
         });
+        #endregion
 
-        // Outbox
+        #region Outbox
         modelBuilder.Entity<Outbox>(entity =>
         {
             entity.Property(e => e.Type).IsRequired(false);
         });
+        #endregion
 
-        // Agreement
+        #region Agreement
         modelBuilder.Entity<Agreement>(entity =>
         {
             entity.Property(e => e.Version).HasMaxLength(20);
         });
+        #endregion
 
-        // Parameter
+        #region Parameter
         modelBuilder.Entity<Parameter>(entity =>
         {
             entity.Property(e => e.ParamType).HasMaxLength(20);
         });
+        #endregion
 
-        // Blacklist
+        #region Blacklist
         modelBuilder.Entity<Blacklist>(entity =>
         {
             entity.HasOne(e => e.User)
@@ -132,8 +149,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
             entity.Property(e => e.Channel).HasMaxLength(100);
         });
+        #endregion
 
-        // Receipt
+        #region Receipt
         modelBuilder.Entity<Receipt>(entity =>
         {
             entity.HasOne(e => e.Transaction)
@@ -143,8 +161,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.NumberPrefix).HasMaxLength(3);
             entity.Property(e => e.Number).HasMaxLength(9);
         });
+        #endregion
 
-        // SavedTransfer
+        #region SavedTransfer
         modelBuilder.Entity<SavedTransfer>(entity =>
         {
             entity.HasOne(e => e.Wallet)
@@ -155,5 +174,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.DisplayName).HasMaxLength(50);
             entity.Property(e => e.RecipientFullName).HasMaxLength(200);
         });
+        #endregion
     }
 }
