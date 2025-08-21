@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Wallet.Application.Outputs;
+using Wallet.Domain.Entities;
 
 namespace Wallet.Application.Mappings;
 
@@ -9,5 +10,6 @@ public class MappingProfile : Profile
     {
         CreateMap<Domain.Entities.Wallet, WalletByWalletIdOutput>()
             .ForMember(dest => dest.WalletId, opt => opt.MapFrom(src => src.Id));
+        CreateMap<Parameter, GetParameterModel>();
     }
 }

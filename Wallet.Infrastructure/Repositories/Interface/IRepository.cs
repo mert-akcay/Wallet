@@ -16,6 +16,8 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// <returns>Bulunan entity veya bulunamazsa null.</returns>
     Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
+    Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+
     /// <summary>
     /// Tüm entity'leri asenkron olarak getirir.
     /// </summary>

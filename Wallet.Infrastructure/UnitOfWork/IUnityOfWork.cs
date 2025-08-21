@@ -6,7 +6,7 @@ namespace Wallet.Infrastructure.UnitOfWork
     public interface IUnityOfWork : IDisposable
     {
         IRepository<T> GetRepository<T>() where T : BaseEntity;
-        void SaveChanges();
-        Task SaveChangesAsync();
+        void SaveChanges(CancellationToken token);
+        Task SaveChangesAsync(CancellationToken token);
     }
 }

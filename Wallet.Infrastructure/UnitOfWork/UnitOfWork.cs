@@ -20,13 +20,13 @@ namespace Wallet.Infrastructure.UnitOfWork
             return new Repository<T>(_context);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken token)
         {
             await _context.SaveChangesAsync();
         }
 
 
-        public void SaveChanges()
+        public void SaveChanges(CancellationToken token)
         {
             _context.SaveChanges();
         }

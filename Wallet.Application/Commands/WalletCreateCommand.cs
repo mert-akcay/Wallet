@@ -27,7 +27,6 @@ public class WalletCreateCommandHandler(IUnityOfWork unityOfWork) : IRequestHand
 
         await unityOfWork.GetRepository<Domain.Entities.Wallet>().AddAsync(wallet);
 
-        await unityOfWork.SaveChangesAsync();
         //TODO error handling
 
         var output = new WalletCreateOutput
