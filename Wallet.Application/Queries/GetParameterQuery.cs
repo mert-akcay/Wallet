@@ -22,7 +22,7 @@ public class GetParameterQueryHandler(IUnityOfWork unityOfWork, IMapper mapper, 
             .FindAsync(p => p.ParamType == request.Input.ParamType && 
             (request.Input.ParamValue == null || p.ParamValue == request.Input.ParamValue));
 
-        validator.Validate(parameter, p => p == null || !p.Any(), "ParameterNotFound");
+        await validator.Validate(parameter, p => p == null || !p.Any(), "ParameterNotFound");
 
         var output = new GetParameterOutput();
         var mappedParameter = mapper.Map<List<GetParameterModel>>(parameter);

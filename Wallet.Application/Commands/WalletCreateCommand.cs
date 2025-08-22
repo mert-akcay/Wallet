@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Wallet.Application.Helpers;
 using Wallet.Application.Inputs;
 using Wallet.Application.Models;

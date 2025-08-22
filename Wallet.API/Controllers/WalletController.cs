@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Wallet.Application.Commands;
 using Wallet.Application.Inputs;
 using Wallet.Application.Queries;
@@ -15,7 +16,6 @@ public class WalletController(IMediator mediator) : ControllerBase
     {
         var command = new WalletCreateCommand(input);
         var response = await mediator.Send(command);
-        //TODO error handling
         return Ok(response);
     }
 
@@ -31,7 +31,6 @@ public class WalletController(IMediator mediator) : ControllerBase
         };
         var query = new WalletByWalletIdQuery(input);
         var response = await mediator.Send(query);
-        //TODO error handling
         return Ok(response);
     }
 }
