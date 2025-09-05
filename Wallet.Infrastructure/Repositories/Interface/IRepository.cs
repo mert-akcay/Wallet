@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq.Expressions;
 using Wallet.Domain.Entities;
 
 namespace Wallet.Infrastructure.Repositories.Interface;
@@ -35,7 +36,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// Yeni bir entity'yi veritabanına asenkron olarak ekler.
     /// </summary>
     /// <param name="entity">Eklenecek entity.</param>
-    Task AddAsync(TEntity entity);
+    Task<EntityEntry<TEntity>> AddAsync(TEntity entity);
 
     /// <summary>
     /// Birden fazla entity'yi veritabanına asenkron olarak ekler.

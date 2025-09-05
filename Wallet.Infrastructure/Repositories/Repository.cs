@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,9 +36,10 @@ namespace Wallet.Infrastructure.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity)
         {
-            await _dbSet.AddAsync(entity);
+            var createdEntity = await _dbSet.AddAsync(entity);
+            return createdEntity;
         }
 
         public async Task AddRangeAsync(IEnumerable<TEntity> entities)

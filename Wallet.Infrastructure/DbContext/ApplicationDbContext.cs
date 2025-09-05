@@ -1,5 +1,7 @@
 ﻿namespace Wallet.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 using Wallet.Domain.Entities;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
@@ -35,6 +37,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                     .HasDefaultValueSql("gen_random_uuid()");
             }
         }
+
 
         #region User
         modelBuilder.Entity<User>(entity =>

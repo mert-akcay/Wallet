@@ -5,7 +5,7 @@ using Wallet.Application.Inputs;
 using Wallet.Application.Models;
 using Wallet.Application.Outputs;
 using Wallet.Application.Validation;
-using Wallet.Infrastructure.UnitOfWork;
+using Wallet.Infrastructure.Repositories.Interface;
 
 namespace Wallet.Application.Queries;
 
@@ -14,11 +14,11 @@ public class WalletByWalletIdQuery(WalletByWalletIdInput input) : IRequest<BaseR
     public WalletByWalletIdInput Input { get; } = input;
 }
 
-public class WalletByWalletIdQueryHandler(IUnityOfWork unityOfWork, IMapper mapper, IValidator validator) : IRequestHandler<WalletByWalletIdQuery, BaseResponse<WalletByWalletIdOutput>>
+public class WalletByWalletIdQueryHandler(IRepository<Domain.Entities.Wallet> walletRepository, IMapper mapper, IValidator validator) : IRequestHandler<WalletByWalletIdQuery, BaseResponse<WalletByWalletIdOutput>>
 {
     public async Task<BaseResponse<WalletByWalletIdOutput>> Handle(WalletByWalletIdQuery request, CancellationToken cancellationToken)
     {
-        var walletResponse = await unityOfWork.GetRepository<Domain.Entities.Wallet>().GetFirstOrDefaultAsync(wallet => wallet.UserId == request.Input.UserId && wallet.Id == request.Input.WalletId);
+        var walletResponse = await walletRepository.GetFirstOrDefaultAsync(wallet => wallet.UserId == request.Input.UserId && wallet.Id == request.Input.WalletId);
 
         await validator.Validate(walletResponse, "WalletCannotBeNull");
 

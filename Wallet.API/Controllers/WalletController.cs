@@ -19,6 +19,7 @@ public class WalletController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
+    //SİLİNECEK
     [HttpGet("get")]
     public async Task<IActionResult> GetById()
     {

@@ -1,9 +1,4 @@
-﻿using Elastic.Channels;
-using Elastic.Ingest.Elasticsearch;
-using Elastic.Ingest.Elasticsearch.DataStreams;
-using Elastic.Serilog.Sinks;
-using Elastic.Transport;
-using Serilog;
+﻿using Serilog;
 
 namespace Wallet.API.Logging;
 
