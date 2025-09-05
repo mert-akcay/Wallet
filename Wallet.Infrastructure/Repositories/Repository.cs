@@ -71,7 +71,7 @@ namespace Wallet.Infrastructure.Repositories
 
         public async Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(predicate);
         }
 
         public void Remove(TEntity entity)
@@ -87,9 +87,10 @@ namespace Wallet.Infrastructure.Repositories
             _dbSet.RemoveRange(entities);
         }
 
-        public void Update(TEntity entity)
+        public bool Update(TEntity entity)
         {
-            _dbSet.Update(entity);
+            var entry = _dbSet.Update(entity);
+            return entry.State == EntityState.Modified;
         }
 
     }

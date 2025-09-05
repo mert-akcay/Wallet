@@ -49,7 +49,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// (Bu metod genellikle senkron bırakılır çünkü sadece entity'nin state'ini değiştirir).
     /// </summary>
     /// <param name="entity">Güncellenecek entity.</param>
-    void Update(TEntity entity);
+    bool Update(TEntity entity);
 
     /// <summary>
     /// Verilen bir entity'yi veritabanından siler.

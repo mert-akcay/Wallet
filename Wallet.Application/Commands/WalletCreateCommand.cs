@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using MassTransit;
+using MediatR;
 using Wallet.Application.Helpers;
 using Wallet.Application.Inputs;
 using Wallet.Application.Models;
 using Wallet.Application.Outputs;
+using Wallet.Domain.Events;
 using Wallet.Infrastructure.Repositories.Interface;
 
 namespace Wallet.Application.Commands;
@@ -12,7 +14,7 @@ public class WalletCreateCommand(WalletCreateInput input) : IRequest<BaseRespons
     public WalletCreateInput Input { get; } = input;
 }
 
-public class WalletCreateCommandHandler(IRepository<Wallet.Domain.Entities.Wallet> walletRepository) : IRequestHandler<WalletCreateCommand, BaseResponse<WalletCreateOutput>>
+public class WalletCreateCommandHandler(IRepository<Wallet.Domain.Entities.Wallet> walletRepository, IBus bus) : IRequestHandler<WalletCreateCommand, BaseResponse<WalletCreateOutput>>
 {
     public async Task<BaseResponse<WalletCreateOutput>> Handle(WalletCreateCommand request, CancellationToken cancellationToken)
     {
@@ -31,6 +33,9 @@ public class WalletCreateCommandHandler(IRepository<Wallet.Domain.Entities.Walle
         {
             WalletId = wallet.Id
         };
+
+        await bus.Publish(new WalletCreatedEvent { WalletId = wallet.Id }, cancellationToken);
+
         return ResponseHelper.Success(output);
     }
 }

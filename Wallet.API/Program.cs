@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Wallet.API.ExceptionHandler;
@@ -5,6 +6,7 @@ using Wallet.API.Logging;
 using Wallet.API.Middlewares;
 using Wallet.Application.Behaviuors;
 using Wallet.Application.Commands;
+using Wallet.Application.Consumers;
 using Wallet.Application.Mappings;
 using Wallet.Application.Validation;
 using Wallet.Infrastructure.DbContext;
@@ -20,6 +22,32 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+builder.Services.AddMassTransit(x =>
+{
+    // Projemizdeki bu consumer'ý MassTransit'e tanýtýyoruz.
+    x.AddConsumer<CardCreatedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", 5672, "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        // Bir 'receive endpoint' (kuyruk) tanýmlýyoruz.
+        // MassTransit, bu kuyruðu OrderCreatedConsumer'ýn dinlediði
+        // tüm olaylar için otomatik olarak subscribe edecektir.
+        //cfg.ReceiveEndpoint("wallet-queue", e =>
+        //{
+        //    e.ConfigureConsumer<WalletCreatedConsumer>(context);
+        //});
+        cfg.ConfigureEndpoints(context);
+        cfg.UseRawJsonSerializer();
+    });
+});
+
 
 builder.Host.UseSerilog();
 builder.Services.AddSerilogLogging(builder.Configuration);
